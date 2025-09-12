@@ -1,0 +1,81 @@
+name: Deploy to Azure Container Apps
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths:
+      - 'QuotationService/**'
+      - 'Shared/**'
+
+env:
+  CONTAINER_REGISTRY: quotationcontainerregistry-haggcjhshrgxgbgw
+  CONTAINER_APP_NAME: quotation-service
+  RESOURCE_GROUP: FreightQuotation
+  GITHUB_ROOT_FOLDER: QuotationService
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up ASP.NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build
+        run: dotnet build --configuration Release ${{ env.GITHUB_ROOT_FOLDER }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}.azurecr.io
+          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
+      - name: Build and push container image to Container Registry
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+          file: ${{ env.GITHUB_ROOT_FOLDER }}/Dockerfile
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Container App Job for migration
+        run: ./.github/scripts/update-migration-job.sh
+        shell: bash
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Run and await migration job
+        run: ./.github/scripts/run-migration-job.sh
+        shell: bash
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Deploy to Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ env.CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: ${{ env.CONTAINER_APP_NAME }}
+
+     
+
+
+          
+            
+
+     
+
+
