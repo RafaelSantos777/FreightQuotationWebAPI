@@ -1,30 +1,24 @@
 ﻿using QuotationService.Models.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuotationService.Models.DTOs;
-
+namespace QuotationService.Models.DTOs.Internal;
 public record AirQuoteRequestDTO : IValidatableObject {
 
     [Required]
     public required long OriginAirportId { get; init; }
-
     [Required]
     public required long DestinationAirportId { get; init; }
-
     [Required]
     public required double LengthCentimeters { get; init; }
-
     [Required]
     public required double WidthCentimeters { get; init; }
-
     [Required]
     public required double HeightCentimeters { get; init; }
-
     [Required]
     public required double WeightKilograms { get; init; }
-
+    
     public required string CurrencyCode { get; init; }
-
+    
     public string? SpecialHandlingCode { get; init; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {

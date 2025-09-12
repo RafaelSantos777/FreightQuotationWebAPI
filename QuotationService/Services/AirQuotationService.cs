@@ -1,6 +1,6 @@
 ﻿using QuotationService.Exceptions;
 using QuotationService.Interfaces;
-using QuotationService.Models.DTOs;
+using QuotationService.Models.DTOs.Internal;
 using QuotationService.Models.Entities;
 
 namespace QuotationService.Services;
