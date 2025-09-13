@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuotationService.Interfaces;
-using QuotationService.Models.DTOs;
+using QuotationService.Models.DTOs.Internal;
 
 namespace QuotationService.Controllers;
 

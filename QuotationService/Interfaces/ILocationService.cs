@@ -1,4 +1,4 @@
-﻿using QuotationService.Models.DTOs;
+﻿using QuotationService.Models.DTOs.Internal;
 
 namespace QuotationService.Interfaces;
 

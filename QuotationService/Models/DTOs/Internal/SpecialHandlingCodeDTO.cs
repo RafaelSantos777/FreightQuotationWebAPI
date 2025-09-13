@@ -1,6 +1,6 @@
 ﻿using QuotationService.Models.Entities;
 
-namespace QuotationService.Models.DTOs;
+namespace QuotationService.Models.DTOs.Internal;
 
 public record SpecialHandlingCodeDTO {
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuotationService.Models.DTOs;
+namespace QuotationService.Models.DTOs.Internal;
 
 public record SeaQuoteRequestDTO { // TODO
 

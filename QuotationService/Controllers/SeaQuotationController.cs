@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 using QuotationService.Interfaces;
-using QuotationService.Models.DTOs;
+using QuotationService.Models.DTOs.Internal;
 
 namespace QuotationService.Controllers;
 
