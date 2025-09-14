@@ -1,6 +1,6 @@
 ﻿namespace QuotationService.Models.DTOs.CargofiveService;
 
-public class RateDTO {
+    public record RateDTO {
 
     public required string UUid { get; init; }
 

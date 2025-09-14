@@ -3,7 +3,7 @@
 namespace QuotationService.Models.DTOs.WebCargoService;
 
 [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
-public class RateDTO {
+public record RateDTO {
 
     public required long UniqueCode { get; init; }
 
