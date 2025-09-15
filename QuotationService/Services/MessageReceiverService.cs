@@ -14,7 +14,7 @@ public class MessageReceiverService(
 
     public override Task StartAsync(CancellationToken cancellationToken) {
         logger.LogInformation("Starting MessageReceiverService");
-        _serviceBusProcessor = serviceBusClient.CreateProcessor(configuration["UserDeletionQueueName"]!);
+        _serviceBusProcessor = serviceBusClient.CreateProcessor(configuration["UserDeletionTopicName"], configuration["TopicSubscriptionName"]);
         return base.StartAsync(cancellationToken);
     }
 

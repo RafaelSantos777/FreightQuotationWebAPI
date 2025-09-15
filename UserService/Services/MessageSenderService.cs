@@ -18,7 +18,7 @@ public class MessageSenderService(
 
     public override Task StartAsync(CancellationToken cancellationToken) {
         logger.LogInformation("Starting MessageSenderService");
-        _serviceBusSender = serviceBusClient.CreateSender(configuration["UserDeletionQueueName"]);
+        _serviceBusSender = serviceBusClient.CreateSender(configuration["UserDeletionTopicName"]);
         _pollingIntervalMinutes = double.Parse(configuration.GetSection("GraphAPI")["PollingIntervalMinutes"]!);
         _currentDeltaLink = null;
         return base.StartAsync(cancellationToken);
@@ -28,8 +28,8 @@ public class MessageSenderService(
         _currentDeltaLink = await GetDeltaLink();
         while (!cancellationToken.IsCancellationRequested) {
             (ICollection<UserDTO> deletedUserDTOs, string nextDeltaLink) = await GetDeletedUsers();
-            await UpdateDeltaLink(nextDeltaLink);
             await SendUserDeletionMessages(deletedUserDTOs);
+            await UpdateDeltaLink(nextDeltaLink);
             await Task.Delay(TimeSpan.FromMinutes(_pollingIntervalMinutes), cancellationToken);
         }
         return;
