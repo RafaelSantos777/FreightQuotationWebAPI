@@ -27,7 +27,7 @@ public class MessageSenderService(
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
         _currentDeltaLink = await GetDeltaLink();
         while (!cancellationToken.IsCancellationRequested) {
-            (IEnumerable<UserDTO> deletedUserDTOs, string nextDeltaLink) = await GetDeletedUsers();
+            (ICollection<UserDTO> deletedUserDTOs, string nextDeltaLink) = await GetDeletedUsers();
             await UpdateDeltaLink(nextDeltaLink);
             await SendUserDeletionMessages(deletedUserDTOs);
             await Task.Delay(TimeSpan.FromMinutes(_pollingIntervalMinutes), cancellationToken);
@@ -40,7 +40,7 @@ public class MessageSenderService(
             return await deltaLinkRepository.Get();
         }
 
-        async Task<(IEnumerable<UserDTO> deletedUserDTOs, string nextDeltaLink)> GetDeletedUsers() {
+        async Task<(ICollection<UserDTO> deletedUserDTOs, string nextDeltaLink)> GetDeletedUsers() {
             await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
             IUserQueryService userQueryService = scope.ServiceProvider.GetRequiredService<IUserQueryService>();
             return await userQueryService.GetDeletedUsers(_currentDeltaLink?.Link);
@@ -56,7 +56,9 @@ public class MessageSenderService(
             await deltaLinkRepository.AddOrUpdate(_currentDeltaLink);
         }
 
-        async Task SendUserDeletionMessages(IEnumerable<UserDTO> deletedUserDTOs) {
+        async Task SendUserDeletionMessages(ICollection<UserDTO> deletedUserDTOs) {
+            if (deletedUserDTOs.Count == 0)
+                return;
             using ServiceBusMessageBatch messageBatch = await _serviceBusSender.CreateMessageBatchAsync(cancellationToken);
             foreach (UserDTO deletedUserDTO in deletedUserDTOs)
                 messageBatch.TryAddMessage(new ServiceBusMessage(deletedUserDTO.Id));

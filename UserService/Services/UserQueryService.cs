@@ -37,7 +37,7 @@ public class UserQueryService(GraphServiceClient graphServiceClient) : IUserQuer
         return userCollectionResponse.Value is null ? [] : userCollectionResponse.Value.Select(UserDTO.FromUser);
     }
 
-    public async Task<(IEnumerable<UserDTO> deletedUserDTOs, string nextDeltaLink)> GetDeletedUsers(string? deltaLink) {
+    public async Task<(ICollection<UserDTO> deletedUserDTOs, string nextDeltaLink)> GetDeletedUsers(string? deltaLink) {
         List<UserDTO> deletedUserDTOs = [];
         string? currentURL = deltaLink ?? null;
         while (true) {

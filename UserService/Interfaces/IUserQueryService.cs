@@ -8,6 +8,6 @@ public interface IUserQueryService {
 
     Task<IEnumerable<UserDTO>> SearchUsers(string? search);
 
-    Task<(IEnumerable<UserDTO> deletedUserDTOs, string nextDeltaLink)> GetDeletedUsers(string? deltaLink);
+    Task<(ICollection<UserDTO> deletedUserDTOs, string nextDeltaLink)> GetDeletedUsers(string? deltaLink);
 
 }
